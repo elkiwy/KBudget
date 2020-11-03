@@ -76,7 +76,7 @@ enum ColorNames:String, CaseIterable{
         if (theme == .dark){
             return Color(c.modified(sat: -0.25, bri: 0.3))
         }else{
-            return Color(c.modified(sat: 0.25, bri: -0.3))
+            return Color(c.modified(sat: 0.05, bri: -0.15))
         }
     }
 }

@@ -80,19 +80,20 @@ struct MainView: View {
 
     @State var newExpense:Bool = false
     @State var newIncome:Bool = false
+    @State var infoAlertShown:Bool = false
 
     var body: some View {
         NavigationView{
             VStack(alignment:.center){
                 //Total
                 Text("Today's total").font(.title2)
-                Text("\(valWithCurr(getTodayIncomes(data: man.transactions) + getTodayExpenses(data: man.transactions)))").font(.title2).bold()
+                Text("\(valWithCurr(getTodayIncomes(data: man.transactions) + getTodayExpenses(data: man.transactions)))").font(.title).bold()
                     .padding(.bottom)
                 Spacer()
                 
                 //Transactions count
                 Text("Transactions count").font(.title2)
-                Text("\(man.transactions.filter({ (t) -> Bool in return Calendar.current.isDateInToday(t.date!) }).count)").font(.title2).bold()
+                Text("\(man.transactions.filter({ (t) -> Bool in return Calendar.current.isDateInToday(t.date!) }).count)").font(.title).bold()
                 Spacer()
                 
                 //New Expense
@@ -105,6 +106,17 @@ struct MainView: View {
                     .sheet(isPresented: $newIncome) {NewTransactionView(type:.income, bind:self.$newIncome)}
                 Spacer()
             }
+            .toolbar(content: {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {self.infoAlertShown.toggle()}, label: {
+                        Text("Info")
+                    })
+                }
+            })
+            //Delete alert
+            .alert(isPresented: self.$infoAlertShown, content: {
+                Alert(title: Text("Info"), message:Text("If you are reading this, you have probably just started using KBudget.\n\nTo register a new expense or income, tap the icons in the main view.\n\nTo create your custom categories go into the second page.\n\nTo review and analyse your data check third and fourth page."))
+            })
             .padding()
             .navigationTitle("KBudget")
         }
@@ -127,9 +139,12 @@ struct MainView: View {
 #if DEBUG
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        TabView{
-            MainView().environment(\.managedObjectContext, DataManager.shared.context)
-        }.colorScheme(.dark)
+        ContentView().colorScheme(.dark)
+
+        //TabView{
+        //
+        //    MainView().environment(\.managedObjectContext, DataManager.shared.context)
+        //}.colorScheme(.dark)
     }
 }
 #endif
